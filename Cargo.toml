@@ -1,0 +1,10 @@
+[package]
+name = "crypto"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aes_crypto = { path = "../aes", features = ["vaes"] }
+
+[dev-dependencies]
+hex = "0.4.3"
