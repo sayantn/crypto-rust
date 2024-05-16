@@ -3,11 +3,5 @@ name = "crypto"
 version = "0.1.0"
 edition = "2021"
 
-[features]
-nightly = ["aes_crypto/nightly"]
-
 [dependencies]
-aes_crypto = { version="1.0.0" , features = ["nightly"] }
-
-#[dev-dependencies]
-#hex = "0.4.3"
+aes_crypto = { path = "../aes" , features = ["nightly"] }

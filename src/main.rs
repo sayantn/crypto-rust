@@ -58,20 +58,20 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     if input.len() == 1 && input[0] == "-all" {
         input = vec![
-            "--aegis128".to_string(),
-            "--aegis256".to_string(),
-            "--aegis128L".to_string(),
-            "--aegis128X2".to_string(),
-            "--aegis128X4".to_string(),
-            "--aegis256X2".to_string(),
-            "--aegis256X4".to_string(),
+            "aegis128".to_string(),
+            "aegis256".to_string(),
+            "aegis128L".to_string(),
+            "aegis128X2".to_string(),
+            "aegis128X4".to_string(),
+            "aegis256X2".to_string(),
+            "aegis256X4".to_string(),
         ];
     }
 
     let data_input = input
         .iter()
-        .filter(|frag| frag.starts_with("--data="))
-        .map(|frag| &frag[7..])
+        .filter(|frag| frag.starts_with("data="))
+        .map(|frag| &frag[5..])
         .next();
 
     let data = match data_input {
@@ -101,25 +101,25 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     println!("Each algorithm will encrypt and decrypt {friendly} of data");
 
-    if input.contains(&"--aegis128".to_string()) {
+    if input.contains(&"aegis128".to_string()) {
         bench_aead!("AEGIS-128" => crypto::aegis::aegis_128 > Aegis128Enc | Aegis128Dec = data);
     }
-    if input.contains(&"--aegis256".to_string()) {
+    if input.contains(&"aegis256".to_string()) {
         bench_aead!("AEGIS-256" => crypto::aegis::aegis_256 > Aegis256Enc | Aegis256Dec = data);
     }
-    if input.contains(&"--aegis128L".to_string()) {
+    if input.contains(&"aegis128L".to_string()) {
         bench_aead!("AEGIS-128L" => crypto::aegis::aegis_128L > Aegis128LEnc | Aegis128LDec = data);
     }
-    if input.contains(&"--aegis128X2".to_string()) {
+    if input.contains(&"aegis128X2".to_string()) {
         bench_aead!("AEGIS-128X2" => crypto::aegis::aegis_128X2 > Aegis128X2Enc | Aegis128X2Dec = data);
     }
-    if input.contains(&"--aegis128X4".to_string()) {
+    if input.contains(&"aegis128X4".to_string()) {
         bench_aead!("AEGIS-128X4" => crypto::aegis::aegis_128X4 > Aegis128X4Enc | Aegis128X4Dec = data);
     }
-    if input.contains(&"--aegis256X2".to_string()) {
+    if input.contains(&"aegis256X2".to_string()) {
         bench_aead!("AEGIS-256X2" => crypto::aegis::aegis_256X2 > Aegis256X2Enc | Aegis256X2Dec = data);
     }
-    if input.contains(&"--aegis256X4".to_string()) {
+    if input.contains(&"aegis256X4".to_string()) {
         bench_aead!("AEGIS-256X4" => crypto::aegis::aegis_256X4 > Aegis256X4Enc | Aegis256X4Dec = data);
     }
 
