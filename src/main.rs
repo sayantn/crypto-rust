@@ -1,4 +1,3 @@
-use crypto::aegis::aegis_128L::{Aegis128LDec, Aegis128LEnc};
 use crypto::{Decrypt, Encrypt};
 use std::env::args;
 use std::error::Error;
@@ -45,7 +44,7 @@ macro_rules! bench_aead {
     ($name:literal => $loc:path > $enc:ty | $dec:ty = $data:expr , $bufsize:literal) => {{
         use $loc::*;
         let (enc_speed, dec_speed) =
-            $crate::bench_enc_dec::<$bufsize, KEY_LEN, IV_LEN, $enc, $dec>($data / $bufsize);
+            $crate::bench_enc_dec::<$bufsize, KEY_LEN, IV_LEN, $enc, $dec>($data / (2 * $bufsize));
         println!("{} Encryption speed: {enc_speed} Gbps, Decryption speed: {dec_speed} Gbps", $name);
     }};
     ($name:literal => $loc:path > $enc:ty | $dec:ty = $data:expr) => {
@@ -55,18 +54,6 @@ macro_rules! bench_aead {
 
 fn main() -> Result<(), Box<dyn Error>> {
     let mut input: Vec<String> = args().skip(1).collect();
-
-    if input.len() == 1 && input[0] == "-all" {
-        input = vec![
-            "aegis128".to_string(),
-            "aegis256".to_string(),
-            "aegis128L".to_string(),
-            "aegis128X2".to_string(),
-            "aegis128X4".to_string(),
-            "aegis256X2".to_string(),
-            "aegis256X4".to_string(),
-        ];
-    }
 
     let data_input = input
         .iter()
@@ -88,6 +75,18 @@ fn main() -> Result<(), Box<dyn Error>> {
             }
         }
     };
+
+    if input.contains(&"-all".to_string()) {
+        input = vec![
+            "aegis128".to_string(),
+            "aegis256".to_string(),
+            "aegis128L".to_string(),
+            "aegis128X2".to_string(),
+            "aegis128X4".to_string(),
+            "aegis256X2".to_string(),
+            "aegis256X4".to_string(),
+        ];
+    }
 
     let friendly = if data >= 1 << 30 {
         format!("{:.2} Gigabytes", data as f64 / (1 << 30) as f64)
