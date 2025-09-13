@@ -85,6 +85,9 @@ fn main() -> Result<(), Box<dyn Error>> {
             "aegis128X4".to_string(),
             "aegis256X2".to_string(),
             "aegis256X4".to_string(),
+            "aes128ocb".to_string(),
+            "aes192ocb".to_string(),
+            "aes256ocb".to_string(),
         ];
     }
 
@@ -120,6 +123,15 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
     if input.contains(&"aegis256X4".to_string()) {
         bench_aead!("AEGIS-256X4" => crypto::aegis::aegis_256X4 > Aegis256X4Enc | Aegis256X4Dec = data);
+    }
+    if input.contains(&"aes128ocb".to_string()) {
+        bench_aead!("AES-128-OCB" => crypto::ocb::aes128ocb > Aes128OcbEnc | Aes128OcbDec = data);
+    }
+    if input.contains(&"aes192ocb".to_string()) {
+        bench_aead!("AES-192-OCB" => crypto::ocb::aes192ocb > Aes192OcbEnc | Aes192OcbDec = data);
+    }
+    if input.contains(&"aes256ocb".to_string()) {
+        bench_aead!("AES-256-OCB" => crypto::ocb::aes256ocb > Aes256OcbEnc | Aes256OcbDec = data);
     }
 
     Ok(())

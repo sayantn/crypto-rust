@@ -2,6 +2,7 @@ use std::iter::zip;
 
 pub mod aegis;
 pub mod buffer;
+pub mod ocb;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Default)]
 enum Stage {
