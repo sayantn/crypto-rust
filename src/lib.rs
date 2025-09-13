@@ -1,23 +1,17 @@
-#![allow(unused)]
-
-use std::cmp::min;
+use std::iter::zip;
 
 pub mod aegis;
 pub mod buffer;
 
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Default)]
-pub(crate) enum Stage {
+enum Stage {
     #[default]
     Ingesting,
     Wrapping,
 }
 
 pub(crate) fn ct_eq(a: &[u8], b: &[u8]) -> bool {
-    let mut result = 0;
-    for i in 0..min(a.len(), b.len()) {
-        result |= a[i] ^ b[i];
-    }
-    result == 0
+    zip(a, b).fold(0, |acc, (x, y)| acc | (x ^ y)) == 0
 }
 
 pub trait Encrypt<const KEY_LEN: usize, const IV_LEN: usize> {

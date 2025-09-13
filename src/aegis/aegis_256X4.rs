@@ -82,7 +82,7 @@ fn decrypt_last_block(state: &mut State, ciphertext: &[u8], position: usize) -> 
 
 fn finalize_state(mut state: State, aad_len: u64, msg_len: u64) -> [u8; MAX_TAG_LEN] {
     let tmp = state[3]
-        ^ AesBlock::from(((aad_len.to_be() as u128) << 64) | (msg_len.to_be() as u128)).into();
+        ^ AesBlock::from((u128::from(aad_len.to_be()) << 64) | u128::from(msg_len.to_be())).into();
 
     for _ in 0..7 {
         state_update(&mut state, tmp);

@@ -21,21 +21,18 @@ fn state_update(state: &mut State, m0: AesBlockX4, m1: AesBlockX4) {
 }
 
 fn initialize(key: [u8; KEY_LEN], iv: [u8; IV_LEN]) -> State {
-    let const_0 = AesBlock::from(CONST_0);
-    let const_1 = AesBlock::from(CONST_1);
-
     let key = AesBlock::from(key);
     let iv = AesBlock::from(iv);
 
     let mut state = [
         (key ^ iv).into(),
-        const_1.into(),
-        const_0.into(),
-        const_1.into(),
+        CONST_1.into(),
+        CONST_0.into(),
+        CONST_1.into(),
         (key ^ iv).into(),
-        (key ^ const_0).into(),
-        (key ^ const_1).into(),
-        (key ^ const_0).into(),
+        (key ^ CONST_0).into(),
+        (key ^ CONST_1).into(),
+        (key ^ CONST_0).into(),
     ];
 
     let key = key.into();
@@ -105,7 +102,7 @@ fn decrypt_last_block(state: &mut State, ciphertext: &[u8], position: usize) -> 
 
 fn finalize_state(mut state: State, aad_len: u64, msg_len: u64) -> [u8; MAX_TAG_LEN] {
     let tmp = state[2]
-        ^ AesBlock::from(((aad_len.to_be() as u128) << 64) | (msg_len.to_be() as u128)).into();
+        ^ AesBlock::from((u128::from(aad_len.to_be()) << 64) | u128::from(msg_len.to_be())).into();
 
     for _ in 0..7 {
         state_update(&mut state, tmp, tmp);

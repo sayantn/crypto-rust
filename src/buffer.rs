@@ -64,8 +64,8 @@ impl<const N: usize> Buffer<N> {
     /// Returns the pointer where the next byte is supposed to go. There may be no more space
     /// The position has garbage values, and it is NOT safe to store to if unsure about the actual
     /// position
-    pub unsafe fn ptr_mut(&mut self) -> *mut u8 {
-        self.data.as_mut_ptr().add(self.position)
+    pub fn ptr_mut(&mut self) -> *mut u8 {
+        unsafe { self.data.as_mut_ptr().add(self.position) }
     }
 
     fn copy_from(&mut self, src: &[u8], offset: usize, len: usize) {
@@ -87,12 +87,6 @@ impl<const N: usize> Buffer<N> {
         self.position += 1;
     }
 
-    pub fn append(&mut self, data: &[u8]) {
-        let len = data.len();
-        assert!(len <= N - self.position);
-        self.copy_from(data, 0, len);
-    }
-
     pub fn process_blocks<const LAST_SPECIAL: bool>(
         &mut self,
         data: &[u8],
@@ -107,7 +101,7 @@ impl<const N: usize> Buffer<N> {
             self.copy_from(data, 0, take);
             offset += take;
 
-            if self.is_full() && (!LAST_SPECIAL || (LAST_SPECIAL && offset < length)) {
+            if self.is_full() && (!LAST_SPECIAL || offset < length) {
                 process_block(&self.data);
                 self.reset();
             } else {
@@ -155,7 +149,7 @@ impl<const N: usize> Buffer<N> {
             self.copy_from(input, 0, take);
             i_offset += take;
 
-            if self.is_full() && (!LAST_SPECIAL || (LAST_SPECIAL && i_offset < length)) {
+            if self.is_full() && (!LAST_SPECIAL || i_offset < length) {
                 transform_block(&self.data, slice_as_array_mut(output, 0));
                 o_offset += N;
                 self.reset();
@@ -194,6 +188,6 @@ impl<const N: usize> Buffer<N> {
 
 impl<const N: usize> Drop for Buffer<N> {
     fn drop(&mut self) {
-        self.data.fill(0)
+        self.data.fill(0);
     }
 }
